@@ -1,0 +1,82 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Medical MCQ Quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 24px auto; padding: 0 12px; }
+    h1 { margin: 10px 0 18px; font-size: 34px; }
+    .q { border: 1px solid #ddd; border-radius: 12px; padding: 14px; margin: 12px 0; }
+    .q h3 { margin: 0 0 10px; font-size: 18px; }
+    label { display:block; padding: 6px 8px; border-radius: 8px; cursor: pointer; }
+    label:hover { background: #f5f5f5; }
+    .correct { background: #e8ffe8 !important; border: 1px solid #9be29b; }
+    .wrong { background: #ffe8e8 !important; border: 1px solid #e29b9b; }
+    .controls { display:flex; gap:10px; flex-wrap:wrap; margin: 16px 0; }
+    button { padding: 10px 14px; border-radius: 10px; border: 1px solid #ccc; background: #fff; cursor:pointer; }
+    button:hover { background:#f4f4f4; }
+    .score { font-size: 20px; font-weight: 800; margin-top: 8px; }
+    .hint { color:#555; font-size: 14px; margin-bottom: 14px; }
+    textarea { width:100%; min-height:140px; border-radius:12px; border:1px solid #ddd; padding:10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .panel { border:1px solid #eee; border-radius:12px; padding:12px; margin-top:14px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .small { font-size: 13px; color:#666; }
+    input[type="number"]{ width:110px; padding:8px; border-radius:10px; border:1px solid #ddd; }
+    input[type="text"]{ width:260px; padding:8px; border-radius:10px; border:1px solid #ddd; }
+    .errorBox { border:1px solid #f1c7c7; background:#fff3f3; color:#7a1f1f; padding:12px; border-radius:12px; margin:12px 0; display:none; }
+  </style>
+</head>
+
+<body>
+  <h1 id="quizTitle">Loading…</h1>
+
+  <div id="errorBox" class="errorBox"></div>
+
+  <div class="hint">
+    Choose answers → click <b>Check</b> to score.
+    Range filter examples: <b>[1-35]U[50-60]</b> or <b>[10]</b> or empty (show first N).
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="controls">
+    <button type="button" id="btnCheck">Check ✅</button>
+    <button type="button" id="btnReset">Reset 🔄</button>
+    <button type="button" id="btnWeak">Weak-only 🔥</button>
+    <button type="button" id="btnExitWeak">Exit weak mode</button>
+  </div>
+
+  <div class="row small">
+    Weak threshold (accuracy below): <input id="weakThreshold" type="number" min="0" max="100" value="70"> %
+    Min attempts: <input id="minAttempts" type="number" min="1" value="2">
+    Show first N (when Range is empty): <input id="limitQuestions" type="number" min="1" value="150">
+  </div>
+
+  <div class="row small">
+    Range (original question numbers): <input id="rangeBox" type="text" placeholder="[1-35]U[50-60]">
+    <button type="button" id="btnApplyRange">Apply range</button>
+    <button type="button" id="btnClearRange">Clear range</button>
+  </div>
+
+  <div id="score" class="score">Score: —</div>
+
+  <div class="panel">
+    <div class="row">
+      <button type="button" id="btnExport">Export progress ⬇️</button>
+      <button type="button" id="btnExportWeakOnly">Export WEAK progress ⬇️🔥</button>
+      <button type="button" id="btnImport">Import progress ⬆️</button>
+      <button type="button" id="btnClearLecture">Clear THIS lecture progress 🧹</button>
+      <button type="button" id="btnClearAll">Clear ALL progress ☠️</button>
+    </div>
+    <p class="small">Export gives you JSON text. Save it in a note/file. Paste it later to restore.</p>
+    <textarea id="progressBox" placeholder="Exported progress JSON appears here... (or paste JSON here to import)"></textarea>
+  </div>
+
+  <!-- 1) Load questions FIRST -->
+  <script src="questions.js"></script>
+  <!-- 2) Then load the app -->
+  <script src="app.js"></script>
+</body>
+</html>
