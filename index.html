@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,77 +5,226 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Medical MCQ Quiz</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: 24px auto; padding: 0 12px; }
-    h1 { margin: 10px 0 18px; font-size: 34px; }
-    .q { border: 1px solid #ddd; border-radius: 12px; padding: 14px; margin: 12px 0; }
-    .q h3 { margin: 0 0 10px; font-size: 18px; }
-    label { display:block; padding: 6px 8px; border-radius: 8px; cursor: pointer; }
-    label:hover { background: #f5f5f5; }
-    .correct { background: #e8ffe8 !important; border: 1px solid #9be29b; }
-    .wrong { background: #ffe8e8 !important; border: 1px solid #e29b9b; }
-    .controls { display:flex; gap:10px; flex-wrap:wrap; margin: 16px 0; }
-    button { padding: 10px 14px; border-radius: 10px; border: 1px solid #ccc; background: #fff; cursor:pointer; }
-    button:hover { background:#f4f4f4; }
-    .score { font-size: 20px; font-weight: 800; margin-top: 8px; }
-    .hint { color:#555; font-size: 14px; margin-bottom: 14px; }
-    textarea { width:100%; min-height:140px; border-radius:12px; border:1px solid #ddd; padding:10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-    .panel { border:1px solid #eee; border-radius:12px; padding:12px; margin-top:14px; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 12px;
+      padding-bottom: 170px;
+      background-color: #f4f6f8;
+    }
+
+    /* Setup Screen Styles (Modern UI) */
+    #setupScreen {
+      background: #ffffff;
+      padding: 30px 24px;
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    #setupScreen h1 {
+      font-size: 26px;
+      color: #111;
+      margin-top: 0;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .setup-row { margin-bottom: 20px; }
+    .setup-row label {
+      display: block;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Customizing the Select Box */
+    .setup-row select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      background-color: #f9fafb;
+      font-size: 16px;
+      color: #111;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px top 50%;
+      background-size: 12px auto;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .setup-row select:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+      background-color: #fff;
+    }
+
+    .setup-row select:disabled {
+      background-color: #ececec;
+      color: #999;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    #btnLoadQuiz {
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 16px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 18px;
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    #btnLoadQuiz:active { transform: scale(0.98); box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2); }
+    #btnLoadQuiz:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; transform: none; }
+
+    #quizApp { display: none; }
+    #quizTitle { font-size: 28px; margin: 10px 0 18px; color: #111; }
+
+    /* Quiz container styles */
+    .q { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin: 16px 0; background:#fff; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .qTop { display:flex; align-items:flex-start; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+    .qTop h3 { margin: 0; font-size: 17px; flex: 1; line-height: 1.4; color: #222; }
+
+    .flagWrap { display:flex; align-items:center; gap:8px; user-select:none; white-space: nowrap; }
+    .qFlag { transform: scale(1.2); cursor: pointer; }
+    .warnIcon { font-size: 18px; line-height: 1; display:none; }
+    .warnIcon.show { display:inline; }
+
+    .q label { display:block; padding: 10px 12px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; transition: background 0.1s; margin-bottom: 4px; }
+    .q label:hover { background: #f3f4f6; }
+
+    .correct { background: #e8ffe8 !important; border: 1px solid #9be29b !important; color: #0a5c0a; font-weight: bold; }
+    .wrong   { background: #ffe8e8 !important; border: 1px solid #e29b9b !important; color: #900b0b; }
+
+    /* AFTER Check: flagged question becomes dark red */
+    .q.flaggedAfterCheck { background: #4a0b0b; border-color: #4a0b0b; color: #fff; }
+    .q.flaggedAfterCheck h3 { color: #fff; }
+    .q.flaggedAfterCheck label { color:#fff; }
+    .q.flaggedAfterCheck label:hover { background: rgba(255,255,255,0.1); }
+    .q.flaggedAfterCheck label.correct { background: #e8ffe8 !important; color:#111; }
+    .q.flaggedAfterCheck label.wrong   { background: #ffe8e8 !important; color:#111; }
+
+    /* LOCK MECHANISM: Freezes choices and dims unselected options after grading */
+    #quiz.graded label { pointer-events: none; }
+    #quiz.graded label:not(.correct):not(.wrong) { opacity: 0.5; }
+
+    button.secondary { padding: 10px 14px; border-radius: 10px; border: 1px solid #ccc; background: #fff; cursor:pointer; font-weight: 600; color: #333; }
+    button.secondary:hover { background:#f4f4f4; }
+
+    .score { font-size: 22px; font-weight: 800; margin-top: 8px; color: #111; }
+    .hint { color:#555; font-size: 14px; margin-bottom: 14px; background: #e0f2fe; padding: 12px; border-radius: 8px; border: 1px solid #bae6fd; }
+
+    textarea { width:100%; min-height:140px; border-radius:12px; border:1px solid #ddd; padding:12px; font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.4; box-sizing: border-box; }
+    .panel { border:1px solid #e5e7eb; border-radius:12px; padding:16px; margin-top:16px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom: 12px; }
     .small { font-size: 13px; color:#666; }
-    input[type="number"]{ width:110px; padding:8px; border-radius:10px; border:1px solid #ddd; }
-    input[type="text"]{ width:260px; padding:8px; border-radius:10px; border:1px solid #ddd; }
+
+    input[type="number"]{ width:90px; padding:8px 12px; border-radius:8px; border:1px solid #ccc; font-size: 14px; }
+    input[type="text"]{ width:220px; padding:8px 12px; border-radius:8px; border:1px solid #ccc; font-size: 14px; }
+
     .errorBox { border:1px solid #f1c7c7; background:#fff3f3; color:#7a1f1f; padding:12px; border-radius:12px; margin:12px 0; display:none; }
+
+    /* Sticky controls */
+    .controlsBar { position: fixed; left: 0; right: 0; bottom: 0; max-width: 900px; margin: 0 auto; padding: 14px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid #e5e7eb; box-shadow: 0 -4px 16px rgba(0,0,0,0.05); z-index: 50; }
+    .controlsGrid { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .controlsLeft, .controlsRight { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .controlsRight .smallLabel { font-size: 13px; color:#555; font-weight: 600; margin-right: 4px; }
+    .controlsNote { margin-top: 8px; font-size: 12px; color:#888; text-align: center; }
   </style>
 </head>
 
 <body>
-  <h1 id="quizTitle">Loading…</h1>
 
-  <div id="errorBox" class="errorBox"></div>
-
-  <div class="hint">
-    Choose answers → click <b>Check</b> to score.
-    Range filter examples: <b>[1-35]U[50-60]</b> or <b>[10]</b> or empty (show first N).
-  </div>
-
-  <div id="quiz"></div>
-
-  <div class="controls">
-    <button type="button" id="btnCheck">Check ✅</button>
-    <button type="button" id="btnReset">Reset 🔄</button>
-    <button type="button" id="btnWeak">Weak-only 🔥</button>
-    <button type="button" id="btnExitWeak">Exit weak mode</button>
-  </div>
-
-  <div class="row small">
-    Weak threshold (accuracy below): <input id="weakThreshold" type="number" min="0" max="100" value="70"> %
-    Min attempts: <input id="minAttempts" type="number" min="1" value="2">
-    Show first N (when Range is empty): <input id="limitQuestions" type="number" min="1" value="150">
-  </div>
-
-  <div class="row small">
-    Range (original question numbers): <input id="rangeBox" type="text" placeholder="[1-35]U[50-60]">
-    <button type="button" id="btnApplyRange">Apply range</button>
-    <button type="button" id="btnClearRange">Clear range</button>
-  </div>
-
-  <div id="score" class="score">Score: —</div>
-
-  <div class="panel">
-    <div class="row">
-      <button type="button" id="btnExport">Export progress ⬇️</button>
-      <button type="button" id="btnExportWeakOnly">Export WEAK progress ⬇️🔥</button>
-      <button type="button" id="btnImport">Import progress ⬆️</button>
-      <button type="button" id="btnClearLecture">Clear THIS lecture progress 🧹</button>
-      <button type="button" id="btnClearAll">Clear ALL progress ☠️</button>
+  <div id="setupScreen">
+    <h1>Select a Lecture</h1>
+    <div class="setup-row">
+      <label for="moduleSelect">Module</label>
+      <select id="moduleSelect">
+        <option value="">-- Select Module --</option>
+      </select>
     </div>
-    <p class="small">Export gives you JSON text. Save it in a note/file. Paste it later to restore.</p>
-    <textarea id="progressBox" placeholder="Exported progress JSON appears here... (or paste JSON here to import)"></textarea>
+    <div class="setup-row">
+      <label for="lectureSelect">Lecture Folder</label>
+      <select id="lectureSelect" disabled>
+        <option value="">-- Select Folder --</option>
+      </select>
+    </div>
+    <button id="btnLoadQuiz" disabled>Load Quiz</button>
   </div>
 
-  <!-- 1) Load questions FIRST -->
-  <script src="questions.js"></script>
-  <!-- 2) Then load the app -->
+  <div id="quizApp">
+    <button id="btnBackToMenu" class="secondary" style="margin-bottom: 16px;">⬅️ Back to Menu</button>
+    <h1 id="quizTitle">Loading…</h1>
+    <div id="errorBox" class="errorBox"></div>
+
+    <div class="hint">
+      Choose answers → click <b>Check</b> to score. <br>
+      Checking ⚠️ automatically marks a question as weak for future review.
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="controlsBar">
+      <div class="controlsGrid">
+        <div class="controlsLeft">
+          <button type="button" id="btnCheck" class="secondary" style="background: #10b981; color: white; border: none;">Check ✅</button>
+          <button type="button" id="btnReset" class="secondary">Reset 🔄</button>
+          <button type="button" id="btnWeak" class="secondary" style="background: #ef4444; color: white; border: none;">Weak-only 🔥</button>
+          <button type="button" id="btnExitWeak" class="secondary">Exit weak</button>
+        </div>
+        <div class="controlsRight">
+          <span class="smallLabel">Limit:</span>
+          <input id="limitQuestions" type="number" min="1" value="150">
+          <span class="smallLabel">Range:</span>
+          <input id="rangeBox" type="text" placeholder="[1-35]U[50-60]">
+          <button type="button" id="btnApplyRange" class="secondary">Apply</button>
+          <button type="button" id="btnClearRange" class="secondary">Clear</button>
+        </div>
+      </div>
+      <div class="controlsNote">Scroll down for threshold, export, and attempt viewer options.</div>
+    </div>
+
+    <div class="row small" style="margin-top:20px; padding: 0 8px;">
+      Weak threshold (accuracy below): <input id="weakThreshold" type="number" min="0" max="100" value="70"> %
+      &nbsp;&nbsp;Min attempts: <input id="minAttempts" type="number" min="1" value="2">
+    </div>
+
+    <div id="score" class="score" style="padding: 0 8px;">Score: —</div>
+
+    <div class="panel">
+      <div class="row">
+        <button type="button" id="btnExportLecture" class="secondary">Export THIS Lecture Attempt 📝</button>
+        <button type="button" id="btnShowAttempt" class="secondary">Show Attempt 👁️</button>
+      </div>
+      <hr style="border: none; border-top: 1px solid #eee; margin: 12px 0;">
+      <div class="row">
+        <button type="button" id="btnExport" class="secondary">Export All ⬇️</button>
+        <button type="button" id="btnExportWeakOnly" class="secondary">Export WEAK 🔥</button>
+        <button type="button" id="btnImport" class="secondary">Import ⬆️</button>
+        <button type="button" id="btnClearLecture" class="secondary">Clear THIS 🧹</button>
+        <button type="button" id="btnClearAll" class="secondary">Clear ALL ☠️</button>
+      </div>
+      <p class="small">Paste a specific lecture's JSON below and click <b>Show Attempt 👁️</b> to review exactly what you answered.</p>
+      <textarea id="progressBox" placeholder="Exported progress JSON appears here... (or paste JSON here to import / view attempt)"></textarea>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
